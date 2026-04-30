@@ -1,65 +1,89 @@
-import Image from "next/image";
+import { novedades } from "@/content/novedades"
+import { materias } from "@/content/materias"
+import { MateriaCard } from "@/components/calendario/materia-card"
+import { NovedadCard } from "@/components/novedades/novedad-card"
+import Link from "next/link"
 
-export default function Home() {
+export default function HomePage() {
+  const featuredNews = [...novedades]
+    .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+    .slice(0, 3)
+
+  const today = new Date().getDay()
+  const dayMap: Record<number, string> = {
+    1: "lunes",
+    2: "martes",
+    3: "miércoles",
+    4: "jueves",
+    5: "viernes",
+  }
+  const todayKey = dayMap[today]
+  const todayCourses = todayKey
+    ? materias.filter((m) =>
+        m.horarios.some((h) => h.dia === todayKey)
+      ).slice(0, 3)
+    : []
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-12">
+      <section className="space-y-4">
+        <h1 className="text-4xl font-bold text-accent">datoseia</h1>
+        <p className="text-lg text-muted-foreground">
+          Técnico Superior en Data Science e Inteligencia Artificial — ISFT 199
+        </p>
+      </section>
+
+      {todayCourses.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Clases de hoy</h2>
+            <Link href="/calendario" className="text-sm text-accent hover:underline">
+              Ver calendario →
+            </Link>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {todayCourses.map((m) => (
+              <MateriaCard key={m.slug} materia={m} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">Últimas novedades</h2>
+          <Link href="/novedades" className="text-sm text-accent hover:underline">
+            Ver todas →
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="grid gap-4 md:grid-cols-3">
+          {featuredNews.map((n) => (
+            <NovedadCard key={n.id} novedad={n} />
+          ))}
         </div>
-      </main>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Accesos rápidos</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Link href="/materias" className="bg-surface border border-border rounded-lg p-4 hover:border-accent/50 transition-colors">
+            <h3 className="font-medium text-accent mb-1">Materias</h3>
+            <p className="text-sm text-muted-foreground">Ver todos los cursos</p>
+          </Link>
+          <Link href="/recursos" className="bg-surface border border-border rounded-lg p-4 hover:border-accent/50 transition-colors">
+            <h3 className="font-medium text-accent mb-1">Recursos</h3>
+            <p className="text-sm text-muted-foreground">Cursos y herramientas</p>
+          </Link>
+          <Link href="/resumenes" className="bg-surface border border-border rounded-lg p-4 hover:border-accent/50 transition-colors">
+            <h3 className="font-medium text-accent mb-1">Resúmenes</h3>
+            <p className="text-sm text-muted-foreground">Apuntes de clases</p>
+          </Link>
+          <Link href="/chat" className="bg-surface border border-border rounded-lg p-4 hover:border-accent/50 transition-colors">
+            <h3 className="font-medium text-accent mb-1">Chat IA</h3>
+            <p className="text-sm text-muted-foreground">Preguntá sobre la carrera</p>
+          </Link>
+        </div>
+      </section>
     </div>
-  );
+  )
 }
