@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 import { checkRateLimit } from '@/lib/rag/rate-limit'
 import { withFallback } from '@/lib/rag/fallback'
+import { embedQuery } from '@/lib/rag/query'
 
 export const runtime = 'nodejs'
 
@@ -20,16 +20,14 @@ export async function POST(req: NextRequest) {
   const { messages, materiaSlug } = await req.json()
   const userQuery = messages.at(-1).content
 
-  const genai = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!)
-  const embedder = genai.getGenerativeModel({ model: 'text-embedding-004' })
-  const { embedding } = await embedder.embedContent(userQuery)
+  const queryEmbedding = await embedQuery(userQuery)
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
   const { data: chunks } = await supabase.rpc('buscar_chunks', {
-    query_embedding: embedding.values,
+    query_embedding: queryEmbedding,
     match_count: 5,
     filter_materia: materiaSlug ?? null,
   })

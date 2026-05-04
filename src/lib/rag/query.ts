@@ -1,11 +1,22 @@
 import { createClient } from '@supabase/supabase-js'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export async function embedQuery(query: string): Promise<number[]> {
-  const genai = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!)
-  const embedder = genai.getGenerativeModel({ model: 'text-embedding-004' })
-  const { embedding } = await embedder.embedContent(query)
-  return embedding.values
+  const response = await fetch('https://api.cohere.ai/v1/embed', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.COHERE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'embed-v4.0',
+      texts: [query],
+      input_type: 'search_query',
+      output_dimension: 1024,
+      embedding_types: ['float'],
+    }),
+  })
+  const data = await response.json()
+  return data.embeddings.float[0]
 }
 
 export async function searchChunks(
