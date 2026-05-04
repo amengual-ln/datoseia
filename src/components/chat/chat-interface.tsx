@@ -54,26 +54,44 @@ export function ChatInterface() {
         throw new Error(data.error || "Error en la solicitud")
       }
 
-      const reader = response.body?.getReader()
+      if (!response.body) {
+        throw new Error("No response body")
+      }
+
+      const reader = response.body.getReader()
       const decoder = new TextDecoder()
-      let assistantMessage = ""
+      let assistantContent = ""
+      let buffer = ""
 
       const assistantId = (Date.now() + 1).toString()
       setMessages(prev => [...prev, { id: assistantId, role: "assistant", content: "" }])
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-          const chunk = decoder.decode(value)
-          assistantMessage += chunk
-          setMessages(prev =>
-            prev.map(msg =>
-              msg.id === assistantId
-                ? { ...msg, content: assistantMessage }
-                : msg
-            )
-          )
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ""
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const json = JSON.parse(line.slice(6))
+              if (json.textDelta) {
+                assistantContent += json.textDelta
+                setMessages(prev =>
+                  prev.map(msg =>
+                    msg.id === assistantId
+                      ? { ...msg, content: assistantContent }
+                      : msg
+                  )
+                )
+              }
+            } catch {
+              // skip malformed JSON
+            }
+          }
         }
       }
     } catch (err: any) {
