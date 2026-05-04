@@ -18,7 +18,8 @@ export async function withFallback(params: {
 
   for (const model of MODEL_CHAIN) {
     try {
-      return await streamText({ ...params, model } as any)
+      const result = await streamText({ ...params, model } as any)
+      return result
     } catch (err: any) {
       const isQuotaError =
         err?.status === 429 ||

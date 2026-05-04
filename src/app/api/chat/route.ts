@@ -49,7 +49,7 @@ ${context}`
     maxTokens: 1024,
   })
 
-  return (result as any).toDataStreamResponse({
+  return result.toTextStreamResponse({
     headers: { 'X-RateLimit-Remaining': String(remaining) }
   })
 }
