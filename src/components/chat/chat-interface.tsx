@@ -61,7 +61,6 @@ export function ChatInterface() {
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let assistantContent = ""
-      let buffer = ""
 
       const assistantId = (Date.now() + 1).toString()
       setMessages(prev => [...prev, { id: assistantId, role: "assistant", content: "" }])
@@ -70,28 +69,32 @@ export function ChatInterface() {
         const { done, value } = await reader.read()
         if (done) break
 
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ""
+        const chunk = decoder.decode(value, { stream: true })
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const json = JSON.parse(line.slice(6))
-              if (json.textDelta) {
-                assistantContent += json.textDelta
-                setMessages(prev =>
-                  prev.map(msg =>
-                    msg.id === assistantId
-                      ? { ...msg, content: assistantContent }
-                      : msg
-                  )
-                )
-              }
-            } catch {
-              // skip malformed JSON
-            }
-          }
+        // AI SDK SSE format: data: {"type":"text-delta","textDelta":"..."}
+        const textDeltaMatch = chunk.match(/"textDelta"\s*:\s*"([^"]*)"/)
+        if (textDeltaMatch) {
+          assistantContent += textDeltaMatch[1]
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.id === assistantId
+                ? { ...msg, content: assistantContent }
+                : msg
+            )
+          )
+          continue
+        }
+
+        // Plain text chunks (no JSON wrapper)
+        if (!chunk.startsWith('data:')) {
+          assistantContent += chunk
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.id === assistantId
+                ? { ...msg, content: assistantContent }
+                : msg
+            )
+          )
         }
       }
     } catch (err: any) {
