@@ -24,8 +24,7 @@
   --color-accent-muted: var(--accent-muted);
   --color-muted: var(--muted);
   --color-ring: var(--ring);
-  --font-serif: 'Cormorant Garamond', 'Georgia', serif;
-  --font-sans: 'Source Sans 3', 'Helvetica Neue', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
@@ -79,14 +78,9 @@ a:hover {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
   font-weight: 600;
   line-height: 1.2;
   color: var(--foreground);
-}
-
-.font-serif {
-  font-family: var(--font-serif);
 }
 
 .font-mono {

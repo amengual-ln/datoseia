@@ -17,7 +17,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
       </head>
@@ -27,10 +27,10 @@ export default function RootLayout({
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded bg-accent flex items-center justify-center">
-                  <span className="text-white font-serif font-bold text-lg">D</span>
+                  <span className="text-white font-bold text-lg">D</span>
                 </div>
                 <div>
-                  <span className="font-serif font-semibold text-lg tracking-tight">datoseia</span>
+                  <span className="font-semibold text-lg tracking-tight">datoseia</span>
                   <span className="hidden sm:inline text-muted text-sm ml-2">ISFT 199</span>
                 </div>
               </div>
@@ -41,13 +41,13 @@ export default function RootLayout({
                   { href: "/materias", label: "Materias" },
                   { href: "/novedades", label: "Novedades" },
                   { href: "/recursos", label: "Recursos" },
-                  { href: "/resumenes", label: "Resumenes" },
+                  { href: "/resumenes", label: "Resúmenes" },
                   { href: "/chat", label: "Chat IA" },
                 ].map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
-                    className="px-3 py-1.5 text-sm font-sans font-medium rounded-md hover:bg-surface-raised hover:text-accent transition-all duration-150 text-muted hover:text-foreground"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-surface-raised hover:text-accent transition-all duration-150 text-muted hover:text-foreground"
                   >
                     {link.label}
                   </a>
@@ -63,8 +63,8 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="text-center md:text-left">
-                <p className="font-serif font-semibold text-lg">ISFT 199</p>
-                <p className="text-sm text-muted">Tecnico Superior en Data Science e Inteligencia Artificial</p>
+                <p className="font-semibold text-lg">ISFT 199</p>
+                <p className="text-sm text-muted">Técnico Superior en Data Science e Inteligencia Artificial</p>
               </div>
               <div className="flex gap-6 text-sm text-muted">
                 <a href="/calendario" className="hover:text-accent transition-colors">Calendario</a>
