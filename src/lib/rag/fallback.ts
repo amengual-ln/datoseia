@@ -4,9 +4,10 @@ import { mistral } from '@ai-sdk/mistral'
 import { streamText } from 'ai'
 
 const MODEL_CHAIN = [
-  google('gemini-2.0-flash'),
+  groq('llama-3.3-70b-versatile'),
   groq('llama-3.1-8b-instant'),
   mistral('mistral-small-latest'),
+  google('gemini-2.0-flash'),
 ]
 
 export async function withFallback(params: {
