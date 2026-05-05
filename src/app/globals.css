@@ -1,41 +1,122 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --accent: #00ff88;
-  --accent-dim: #00cc6a;
-  --surface: #141414;
-  --border: #2a2a2a;
+  --background: #faf8f5;
+  --foreground: #1a1a2e;
+  --surface: #ffffff;
+  --surface-raised: #f5f3ef;
+  --border: #e0ddd5;
+  --accent: #8b2635;
+  --accent-light: #c4434d;
+  --accent-muted: #e8d5d7;
+  --muted: #6b6b7b;
+  --ring: #8b263540;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-dim: var(--accent-dim);
   --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-muted: var(--accent-muted);
+  --color-muted: var(--muted);
+  --color-ring: var(--ring);
+  --font-serif: 'Cormorant Garamond', 'Georgia', serif;
+  --font-sans: 'Source Sans 3', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Geist', Arial, sans-serif;
+  font-family: var(--font-sans);
   min-height: 100vh;
+  line-height: 1.6;
+}
+
+::selection {
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-raised);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }
 
 a {
   color: var(--accent);
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--accent-light);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--foreground);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-surface {
+  background: var(--surface);
+}
+
+.border-border {
+  border-color: var(--border);
+}
+
+.bg-accent-muted {
+  background: var(--accent-muted);
+}
+
+.text-accent-light {
+  color: var(--accent-light);
+}
+
+.bg-surface-raised {
+  background: var(--surface-raised);
 }
