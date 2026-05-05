@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MessageBubble } from "./message-bubble"
 import { Badge } from "@/components/ui/badge"
 import { materias } from "@/content/materias"
@@ -60,7 +60,7 @@ export function ChatInterface() {
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
-      let assistantContent = ""
+      let buffer = ""
 
       const assistantId = (Date.now() + 1).toString()
       setMessages(prev => [...prev, { id: assistantId, role: "assistant", content: "" }])
@@ -69,32 +69,42 @@ export function ChatInterface() {
         const { done, value } = await reader.read()
         if (done) break
 
-        const chunk = decoder.decode(value, { stream: true })
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ""
 
-        // AI SDK SSE format: data: {"type":"text-delta","textDelta":"..."}
-        const textDeltaMatch = chunk.match(/"textDelta"\s*:\s*"([^"]*)"/)
-        if (textDeltaMatch) {
-          assistantContent += textDeltaMatch[1]
-          setMessages(prev =>
-            prev.map(msg =>
-              msg.id === assistantId
-                ? { ...msg, content: assistantContent }
-                : msg
-            )
-          )
-          continue
-        }
+        for (const line of lines) {
+          const trimmed = line.trim()
+          if (!trimmed || trimmed === 'data: [DONE]') continue
 
-        // Plain text chunks (no JSON wrapper)
-        if (!chunk.startsWith('data:')) {
-          assistantContent += chunk
-          setMessages(prev =>
-            prev.map(msg =>
-              msg.id === assistantId
-                ? { ...msg, content: assistantContent }
-                : msg
-            )
-          )
+          const dataLine = trimmed.startsWith('data: ') ? trimmed.slice(6) : trimmed
+
+          // Try JSON parse for SSE format
+          try {
+            const json = JSON.parse(dataLine)
+            if (json.textDelta) {
+              setMessages(prev => {
+                const updated = prev.map(msg =>
+                  msg.id === assistantId
+                    ? { ...msg, content: (msg.content || '') + json.textDelta }
+                    : msg
+                )
+                return updated
+              })
+            }
+          } catch {
+            // Not JSON - treat as plain text chunk
+            if (!trimmed.startsWith('data:')) {
+              setMessages(prev => {
+                const updated = prev.map(msg =>
+                  msg.id === assistantId
+                    ? { ...msg, content: (msg.content || '') + dataLine }
+                    : msg
+                )
+                return updated
+              })
+            }
+          }
         }
       }
     } catch (err: any) {
