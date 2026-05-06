@@ -36,16 +36,6 @@ ${context}`
     maxTokens: 1024,
   })
 
-  const textStream = result.toTextStreamResponse()
-  const reader = textStream.getReader()
-  let fullText = ''
-
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
-    const chunk = new TextDecoder().decode(value)
-    fullText += chunk
-  }
-
+  const fullText = await result.text()
   return fullText
 }
