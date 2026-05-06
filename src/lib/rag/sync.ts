@@ -36,6 +36,9 @@ ${context}`
     maxTokens: 1024,
   })
 
-  const fullText = await result.text()
+  let fullText = ''
+  for await (const chunk of result.textStream) {
+    fullText += chunk
+  }
   return fullText
 }
